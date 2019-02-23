@@ -49,7 +49,6 @@
 </div>
 <br />
 
-
 <?php
 // can't be refreshed a lot, will cause the api to not respond
 // create a 'cache' to store the json so if the api isn't responding
@@ -62,7 +61,6 @@ if (!file_exists($cache_dir)) {
 // https://michelf.ca/projects/php-markdown/
 require_once 'Michelf/Markdown.inc.php';
 use Michelf\Markdown;
-
 
 // fakes context to be able to scrape the web page
 $context = stream_context_create(
@@ -80,7 +78,7 @@ $project_url = "https://api.github.com/repos/keithallatt/";
 $html_url_1 = "https://raw.githubusercontent.com/keithallatt/";
 $html_url_2 = "/master/README.md";
 
-$payload = file_get_contents($api_url, false, $context);
+$payload = @file_get_contents($api_url, false, $context) or false;
 
 /////////////////////////////////////
 // fail returns false.
@@ -96,9 +94,11 @@ if ($got_request) {
   } else {
     fwrite($handle, $payload);
   }
-
 } else {
-  print_r("Reading from cache");
+  // different from portion in for each.
+  print_r("<div class=\"container\"> <h3>You are viewing a cached version of
+    this website. Any recent changes will not appear here. </h3></div>");
+  print_r("<br />");
   // didn't get the request, load from cache
   $location = $cache_dir . "keithallatt.json";
 
@@ -107,7 +107,7 @@ if ($got_request) {
   if ($handle == false) {
     echo "Error reading";
   } else {
-    $payload = file_get_contents($location, false, $context);
+    $payload = fread($handle,filesize($location));
   }
 }
 /////////////////////////////////////
@@ -140,7 +140,7 @@ foreach ($ar as &$value) {
 
     $this_repo_stats = $project_url . $name;
 
-    $this_stats_contents = file_get_contents($this_repo_stats, false, $context);
+    $this_stats_contents = @file_get_contents($this_repo_stats, false, $context);
 
     /////////////////////////////////////
     // fail returns false.
@@ -156,9 +156,7 @@ foreach ($ar as &$value) {
       } else {
         fwrite($handle, $this_stats_contents);
       }
-
     } else {
-      print_r("Reading from cache");
       // didn't get the request, load from cache
       $location = $cache_dir . $name . ".json";
 
@@ -167,43 +165,45 @@ foreach ($ar as &$value) {
       if ($handle == false) {
         echo "Error reading";
       } else {
-        $this_stats_contents = file_get_contents($location, false, $context);
+        $this_stats_contents = fread($handle,filesize($location));
       }
     }
     /////////////////////////////////////
 
     $this_stats = json_decode($this_stats_contents);
 
-
     $project_language = $this_stats->language;
     $project_link = $this_stats->html_url;
-    $project_created = $this_stats->created_at;
+    $project_created = str_replace(
+      "T", " at ",
+      substr($this_stats->created_at, 0, -1)
+    );
 
-    print_r("<div class=\"container\"> <h2 id=\"" . $name . "_anchor\" style=\"padding-top: 80px; margin-top: -40px;\">" . $name . "</h2>\n");
-
+    print_r("<div class=\"container\"> <h2 id=\"" . $name . "_anchor\"
+      style=\"padding-top: 80px; margin-top: -40px;\">" . $name . "</h2>\n");
 
     $background_color = $language_colors[$project_language];
 
-    print_r("<span class=\"dot\" style=\"background-color: ". $background_color .";\"></span>&nbsp;&nbsp;&nbsp;&nbsp;");
+    print_r("<span class=\"dot\" style=\"background-color: " . $background_color .
+      ";\"></span>&nbsp;&nbsp;&nbsp;&nbsp;");
 
-    print_r($project_language . "&nbsp;&nbsp;&nbsp;&nbsp;");
-    print_r($project_link . "&nbsp;&nbsp;&nbsp;&nbsp;");
-    print_r("Created: " . $project_created . "&nbsp;&nbsp;&nbsp;&nbsp;");
-
-
+    print_r($project_language . "<br />");
+    print_r("<a href=\"" . $project_link . "\">Project Link</a><br />");
+    print_r("Created: " . $project_created . "<br />");
 
     print_r("<br />");
-    print_r("<button type=\"button\" class=\"btn btn-info\" data-toggle=\"collapse\" data-target=\"#" . $name . "\">See more..</button>\n");
+    print_r("<button type=\"button\" class=\"btn btn-info\"
+      data-toggle=\"collapse\" data-target=\"#" . $name . "\">
+      See more..</button>\n");
     print_r("<div id=\"" . $name . "\" class=\"collapse\"> <br />");
 
     $file_contents = file_get_contents($full_url, false, $context);
 
+    // show markdown readme for the repo
     print_r(Markdown::defaultTransform($file_contents));
 
-    print_r("<br /></div><br /> <br /> </div><br />");
-
-    print_r("<br />");
-    print_r("<br />");
+    // add spacing after
+    print_r("<br /></div><br /> <br /> </div><br /><br /><br />");
 }
 
 
