@@ -54,8 +54,10 @@
 // can't be refreshed a lot, will cause the api to not respond
 // create a 'cache' to store the json so if the api isn't responding
 // then it'll use the cache.
-$cache_file = "cache.txt";
-
+$cache_dir = "cache/";
+if (!file_exists($cache_dir)) {
+  mkdir($cache_dir, 0777, true);
+}
 
 // https://michelf.ca/projects/php-markdown/
 require_once 'Michelf/Markdown.inc.php';
@@ -80,12 +82,42 @@ $html_url_2 = "/master/README.md";
 
 $payload = file_get_contents($api_url, false, $context);
 
+/////////////////////////////////////
+// fail returns false.
+$got_request = $payload != false;
+if ($got_request) {
+  // got the request, can save to cache
+  $location = $cache_dir . "keithallatt.json";
+
+  $handle = fopen($location, 'w');
+
+  if ($handle == false) {
+    echo "Error writing";
+  } else {
+    fwrite($handle, $payload);
+  }
+
+} else {
+  print_r("Reading from cache");
+  // didn't get the request, load from cache
+  $location = $cache_dir . "keithallatt.json";
+
+  $handle = fopen($location, 'r');
+
+  if ($handle == false) {
+    echo "Error reading";
+  } else {
+    $payload = file_get_contents($location, false, $context);
+  }
+}
+/////////////////////////////////////
+
 // contains json
 $ar = json_decode($payload);
 
 print_r("<nav class=\"navbar navbar-inverse navbar-fixed-top\">");
 print_r("<div class=\"container-fluid\"><div class=\"navbar-header\">");
-print_r("<a class=\"navbar-brand\" href=\"#\">WebSiteName</a>");
+print_r("<a class=\"navbar-brand\" href=\"#\">Portfolio</a>");
 print_r("</div><ul class=\"nav navbar-nav\">");
 
 foreach ($ar as &$value) {
@@ -108,9 +140,40 @@ foreach ($ar as &$value) {
 
     $this_repo_stats = $project_url . $name;
 
-    $this_stats = json_decode(
-      file_get_contents($this_repo_stats, false, $context)
-    );
+    $this_stats_contents = file_get_contents($this_repo_stats, false, $context);
+
+    /////////////////////////////////////
+    // fail returns false.
+    $got_request = $this_stats_contents != false;
+    if ($got_request) {
+      // got the request, can save to cache
+      $location = $cache_dir . $name . ".json";
+
+      $handle = fopen($location, 'w');
+
+      if ($handle == false) {
+        echo "Error writing";
+      } else {
+        fwrite($handle, $this_stats_contents);
+      }
+
+    } else {
+      print_r("Reading from cache");
+      // didn't get the request, load from cache
+      $location = $cache_dir . $name . ".json";
+
+      $handle = fopen($location, 'r');
+
+      if ($handle == false) {
+        echo "Error reading";
+      } else {
+        $this_stats_contents = file_get_contents($location, false, $context);
+      }
+    }
+    /////////////////////////////////////
+
+    $this_stats = json_decode($this_stats_contents);
+
 
     $project_language = $this_stats->language;
     $project_link = $this_stats->html_url;
