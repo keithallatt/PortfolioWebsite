@@ -119,11 +119,17 @@ print_r("<nav class=\"navbar navbar-inverse navbar-fixed-top\">");
 print_r("<div class=\"container-fluid\"><div class=\"navbar-header\">");
 print_r("<a class=\"navbar-brand\" href=\"#\">Portfolio</a>");
 print_r("</div><ul class=\"nav navbar-nav\">");
+print_r("<li class=\"dropdown\">");
+print_r("<a class=\"dropdown-toggle\" data-toggle=\"dropdown\" href=\"#\">Projects");
+print_r("<span class=\"caret\"></span></a>");
+print_r("<ul class=\"dropdown-menu\">");
 
 foreach ($ar as &$value) {
   $name = $value->name;
   print_r("<li><a href=\"#" . $name . "_anchor\">" . $name . "</a></li>");
 }
+print_r("</ul></li>");
+
 print_r("</ul></div></nav>");
 
 // add more as it comes.
@@ -135,14 +141,15 @@ $colummns = 2;
 $span = 12 / $colummns;
 $column_count = 0;
 
-print_r("<div class=\"container\">");
+print_r("<div style=\"background-color: #dddddd\" class=\"container\">");
 // prints out each name
 foreach ($ar as &$value) {
-
     if ($column_count == 0) {
       print_r("<div class=\"row\">\n");
     }
-    print_r("<div class=\"col-sm-" . $span . "\">\n");
+
+    print_r("<div style=\"border-style: solid; border-color: #dddddd;
+      background-color: #ffffff\" class=\"col-sm-" . $span . "\">\n");
 
     $name = $value->name;
     $full_url = $html_url_1 . $name . $html_url_2;
@@ -189,7 +196,8 @@ foreach ($ar as &$value) {
     );
 
     print_r("<div> <h2 id=\"" . $name . "_anchor\"
-      style=\"padding-top: 80px; margin-top: -40px;\">" . $name . "</h2>\n");
+      style=\"padding-top: 80px; margin-top: -40px;
+      text-align: center;\">" . $name . "</h2>\n");
 
     $background_color = $language_colors->$project_language->color;
 
@@ -220,7 +228,6 @@ foreach ($ar as &$value) {
     }
     // post change column
 
-
     print_r("</div>\n");
     if ($column_count == 0) {
       print_r("</div>\n");
@@ -228,8 +235,6 @@ foreach ($ar as &$value) {
 }
 
 print_r("</div>")
-
-
 
 ?>
 </body>
