@@ -43,7 +43,7 @@
   <h1> Keith Allatt's Programming Portfolio </h1>
   <p>
     Using GitHub API and Bootstrap to bring my work to life. This website loads
-    information from my GitHub account (https://github.com/keithallatt) and
+    information from my GitHub account (<a href="https://github.com/keithallatt">https://github.com/keithallatt</a>) and
     displays some documentation for each project.
   </p>
 </div>
@@ -96,8 +96,8 @@ if ($got_request) {
   }
 } else {
   // different from portion in for each.
-  print_r("<div class=\"container\"> <h3>You are viewing a cached version of
-    this website. Any recent changes will not appear here. </h3></div>");
+  print_r("<div class=\"container\" style=\"text-align: center;\"> <h3>You are viewing cached information for
+    this website. <br /><br />Any recent changes to my GitHub will not appear here. </h3></div>");
   print_r("<br />");
   // didn't get the request, load from cache
   $location = $cache_dir . "keithallatt.json";
@@ -127,14 +127,23 @@ foreach ($ar as &$value) {
 print_r("</ul></div></nav>");
 
 // add more as it comes.
-$language_colors = array(
-    "Python" => "#1c2a96",
-    "Java" => "#c18d34",
-    "C#" => "#207721",
+$language_colors = json_decode(
+  fread(fopen("colors.json", "r"),filesize("colors.json"))
 );
 
+$colummns = 2;
+$span = 12 / $colummns;
+$column_count = 0;
+
+print_r("<div class=\"container\">");
 // prints out each name
 foreach ($ar as &$value) {
+
+    if ($column_count == 0) {
+      print_r("<div class=\"row\">\n");
+    }
+    print_r("<div class=\"col-sm-" . $span . "\">\n");
+
     $name = $value->name;
     $full_url = $html_url_1 . $name . $html_url_2;
 
@@ -179,10 +188,10 @@ foreach ($ar as &$value) {
       substr($this_stats->created_at, 0, -1)
     );
 
-    print_r("<div class=\"container\"> <h2 id=\"" . $name . "_anchor\"
+    print_r("<div> <h2 id=\"" . $name . "_anchor\"
       style=\"padding-top: 80px; margin-top: -40px;\">" . $name . "</h2>\n");
 
-    $background_color = $language_colors[$project_language];
+    $background_color = $language_colors->$project_language->color;
 
     print_r("<span class=\"dot\" style=\"background-color: " . $background_color .
       ";\"></span>&nbsp;&nbsp;&nbsp;&nbsp;");
@@ -204,8 +213,21 @@ foreach ($ar as &$value) {
 
     // add spacing after
     print_r("<br /></div><br /> <br /> </div><br /><br /><br />");
+
+    $column_count += 1;
+    if ($column_count >= $colummns) {
+      $column_count = 0;
+    }
+    // post change column
+
+
+    print_r("</div>\n");
+    if ($column_count == 0) {
+      print_r("</div>\n");
+    }
 }
 
+print_r("</div>")
 
 
 
