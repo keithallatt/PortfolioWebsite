@@ -25,7 +25,7 @@
     "site_admin": false
   },
   "html_url": "https://github.com/keithallatt/LogisimCPU",
-  "description": "4 Bit CPU build in Logisim Evolution",
+  "description": "4 Bit CPU build in Logisim Evolution, with Compiler and IDE.",
   "fork": false,
   "url": "https://api.github.com/repos/keithallatt/LogisimCPU",
   "forks_url": "https://api.github.com/repos/keithallatt/LogisimCPU/forks",
@@ -65,7 +65,7 @@
   "releases_url": "https://api.github.com/repos/keithallatt/LogisimCPU/releases{/id}",
   "deployments_url": "https://api.github.com/repos/keithallatt/LogisimCPU/deployments",
   "created_at": "2019-02-15T19:28:57Z",
-  "updated_at": "2019-02-23T23:04:50Z",
+  "updated_at": "2019-02-24T19:18:58Z",
   "pushed_at": "2019-02-23T23:04:48Z",
   "git_url": "git://github.com/keithallatt/LogisimCPU.git",
   "ssh_url": "git@github.com:keithallatt/LogisimCPU.git",
