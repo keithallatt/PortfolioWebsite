@@ -16,15 +16,15 @@
 
 	<style>
 		body {
-			background-color: #e5e4e2;
+			background-color: #dedded;
 		}
 
 		.container {
-			background-color: #ffffff;
+			background-color: #fdfdfd;
 		}
 
 		.jumbotron {
-			background-color: #a9bbc8;
+			background-color: #abaaba;
 		}
 
 		.dot {
@@ -41,6 +41,7 @@
 		    top: -70px;
 		    visibility: hidden;
 		}
+}
 	</style>
 </head>
 <body data-spy="scroll" data-target=".navbar" data-offset="50">
@@ -186,14 +187,14 @@ print_r("</ul></div></nav>");
 
 // add more as it comes.
 $language_colors = json_decode(
-	fread(fopen("colors.json", "r"),filesize("colors.json"))
+	fread(fopen("colors.json", "r"), filesize("colors.json"))
 );
 
-$colummns = 2;
+$colummns = 2; // max
 $span = 12 / $colummns;
 $column_count = 0;
 
-print_r("<div style=\"background-color: #e5e4e2\" class=\"container\">");
+print_r("<div style=\"background-color: #dedded;\" class=\"container\">");
 // prints out each name
 foreach ($ar as &$value) {
 		if ($column_count == 0) {
@@ -205,7 +206,7 @@ foreach ($ar as &$value) {
 			print_r("<div class=\"row\">\n");
 		}
 
-		print_r("<div style=\"border-style: solid; border-color: #e5e4e2;
+		print_r("<div style=\"border-style: solid; border-color: #dedded;
 			background-color: #ffffff\" class=\"col-sm-" . $span . "\">\n");
 
 		$name = $value->name;
