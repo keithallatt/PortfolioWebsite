@@ -86,11 +86,7 @@
 <br />
 
 <?php
-$load_page = true;
-if (!$load_page) {
-	die("Not loading");
-}
-
+// die("Don't load");
 
 // can't be refreshed a lot, will cause the api to not respond
 // create a 'cache' to store the json so if the api isn't responding
@@ -113,6 +109,9 @@ $context = stream_context_create(
 	))
 );
 
+// if loading is still working
+$can_load_pages = true;
+
 // for finding which repos exist
 $api_url = "https://api.github.com/users/keithallatt/repos";
 // for finding stats about a repo
@@ -120,11 +119,18 @@ $project_url = "https://api.github.com/repos/keithallatt/";
 $html_url_1 = "https://raw.githubusercontent.com/keithallatt/";
 $html_url_2 = "/master/README.md";
 
-$payload = @file_get_contents($api_url, false, $context) or false;
+if ($can_load_pages) {
+	$payload = @file_get_contents($api_url, false, $context) or false;
+	/////////////////////////////////////
+	// fail returns false.
+	$got_request = $payload != false;
+} else {
+	/////////////////////////////////////
+	// fail returns false.
+	$payload = false;
+	$got_request = false;
+}
 
-/////////////////////////////////////
-// fail returns false.
-$got_request = $payload != false;
 if ($got_request) {
 	// got the request, can save to cache
 	$location = $cache_dir . "keithallatt.json";
@@ -216,9 +222,19 @@ foreach ($ar as &$value) {
 
 		$this_stats_contents = @file_get_contents($this_repo_stats, false, $context);
 
-		/////////////////////////////////////
-		// fail returns false.
-		$got_request = $this_stats_contents != false;
+
+		if ($can_load_pages) {
+			$this_stats_contents = @file_get_contents($this_repo_stats, false, $context);
+			/////////////////////////////////////
+			// fail returns false.
+			$got_request = $payload != false;
+		} else {
+			/////////////////////////////////////
+			// fail returns false.
+			$this_stats_contents = false;
+			$got_request = false;
+		}
+
 		if ($got_request) {
 			// got the request, can save to cache
 			$location = $cache_dir . $name . ".json";
